@@ -18,7 +18,7 @@ jobs:
         - mysql -uroot < databases/tracker/create_databases.sql
         - curl https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/5.1.1/flyway-commandline-5.1.1-linux-x64.tar.gz | tar xvz
         - flyway-*/flyway -url="jdbc:mysql://localhost:3306/tracker_test" -locations=filesystem:databases/tracker -user=tracker -password= clean migrate
-        - git update-index --chmod=+x gradlew
+        - chmod a+x gradlew
       script: ./gradlew clean build
       before_deploy:
         - git config --local user.name "Travis CI"
@@ -45,7 +45,9 @@ jobs:
         - echo "Deploying $RELEASE_TAG to Cloud Foundry"
       before_script:
         - cf login -a $CF_API_URL -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s $CF_SPACE
-        - git update-index --chmod=+x script/migrate-databases.sh
+        - cd scripts
+        - chmod a+x migrate-databases.sh
+        - cd ..
         - scripts/migrate-databases.sh pal-tracker .
       deploy:
         provider: cloudfoundry
